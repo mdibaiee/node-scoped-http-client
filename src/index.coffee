@@ -4,6 +4,8 @@ https = require 'https'
 url   = require 'url'
 qs    = require 'querystring'
 
+isNode = Object.prototype.toString.call(process) == '[object process]';
+
 class ScopedClient
   # Those properties are in @options but they are either not passed to the
   # request as options or some processing is made on them. They will not be
@@ -78,7 +80,10 @@ class ScopedClient
     (callback) =>
       if callback
         req.on 'response', (res) =>
-          res.setEncoding @options.encoding
+          if isNode
+            res.setEncoding @options.encoding
+
+
           body = ''
           res.on 'data', (chunk) ->
             body += chunk
